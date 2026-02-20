@@ -2,6 +2,7 @@
   "name": "@cio/docs-v2",
   "type": "module",
   "scripts": {
+    "prepare": "svelte-kit sync",
     "dev": "vite dev",
     "build": "vite build",
     "start": "node .output/server/index.mjs",
