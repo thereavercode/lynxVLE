@@ -1,0 +1,9 @@
+{
+    "builds": [
+        {
+            "src": "apps/dashboard/package.json",
+            "use": "@sveltejs/adapter-vercel"
+        }
+    ],
+    "outputDirectory": "apps/dashboard/.svelte-kit/output"
+}
