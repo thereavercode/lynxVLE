@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  registry: https://registry.npmjs.org/
+
+packageExtensionsChecksum: sha256-rf2xlIioQMHoGiAosBJXb6ppUsHQXLNDIgCKbWmgu/c=
+
 importers:
 
   .:

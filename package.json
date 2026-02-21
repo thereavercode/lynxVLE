@@ -32,5 +32,18 @@
   "engines": {
     "node": "^20.x"
   },
-  "packageManager": "pnpm@9.0.0"
+  "pnpm": {
+    "overrides": {
+      "registry": "https://registry.npmjs.org/"
+    },
+    "packageExtensions": {
+      "pnpm@10": {
+        "peerDependencyRules": {
+          "ignoreMissing": [
+            "@pnpm/*"
+          ]
+        }
+      }
+    }
+  }
 }
