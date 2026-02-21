@@ -182,6 +182,9 @@ importers:
       '@sveltejs/adapter-auto':
         specifier: ^3.0.0
         version: 3.3.1(@sveltejs/kit@2.53.0(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3)))(svelte@4.2.20)(typescript@5.9.3)(vite@5.4.21(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3)))
+      '@sveltejs/adapter-vercel':
+        specifier: ^3.1.0
+        version: 3.1.0(@sveltejs/kit@2.53.0(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3)))(svelte@4.2.20)(typescript@5.9.3)(vite@5.4.21(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3)))
       '@sveltejs/kit':
         specifier: ^2.0.0
         version: 2.53.0(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3)))(svelte@4.2.20)(typescript@5.9.3)(vite@5.4.21(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3))
@@ -14304,6 +14307,15 @@ snapshots:
   '@sveltejs/adapter-vercel@3.1.0(@sveltejs/kit@1.30.4(svelte@4.2.20)(vite@4.5.14(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3)))(encoding@0.1.13)':
     dependencies:
       '@sveltejs/kit': 1.30.4(svelte@4.2.20)(vite@4.5.14(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3))
+      '@vercel/nft': 0.24.4(encoding@0.1.13)
+      esbuild: 0.18.20
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+
+  '@sveltejs/adapter-vercel@3.1.0(@sveltejs/kit@2.53.0(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3)))(svelte@4.2.20)(typescript@5.9.3)(vite@5.4.21(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3)))':
+    dependencies:
+      '@sveltejs/kit': 2.53.0(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3)))(svelte@4.2.20)(typescript@5.9.3)(vite@5.4.21(@types/node@24.10.13)(lightningcss@1.31.1)(sass@1.97.3))
       '@vercel/nft': 0.24.4(encoding@0.1.13)
       esbuild: 0.18.20
     transitivePeerDependencies:
