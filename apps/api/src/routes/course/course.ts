@@ -1,12 +1,12 @@
-import { TCourseClone,TCourseDownloadContent, TCertificateDownload, ZCertificateDownload, ZCourseDownloadContent } from '$src/types/course';
+import { TCourseClone, TCourseDownloadContent, TCertificateDownload, ZCertificateDownload, ZCourseDownloadContent } from '../../types/course';
 
 import { Hono } from 'hono';
-import { generateCertificate } from '$src/utils/certificate';
-import { generateCoursePdf } from '$src/utils/course';
-import { katexRouter } from '$src/routes/course/katex';
-import { lessonRouter } from '$src/routes/course/lesson';
-import { presignRouter } from '$src/routes/course/presign';
-import { cloneRouter } from '$src/routes/course/clone';
+import { generateCertificate } from '../../utils/certificate';
+import { generateCoursePdf } from '../../utils/course';
+import { katexRouter } from '../../routes/course/katex';
+import { lessonRouter } from '../../routes/course/lesson';
+import { presignRouter } from '../../routes/course/presign';
+import { cloneRouter } from '../../routes/course/clone';
 import { zValidator } from '@hono/zod-validator';
 
 export const courseRouter = new Hono()

@@ -4,7 +4,7 @@
  */
 
 import type { Context } from 'hono';
-import { supabase } from '$src/utils/supabase';
+import { supabase } from '../../utils/supabase';
 
 /**
  * Extract user ID from JWT token
@@ -99,7 +99,7 @@ export const ipKeyGenerator = (c: Context): string => {
  */
 export const endpointKeyGenerator =
   (endpoint: string) =>
-  (c: Context): string => {
-    const baseKey = userKeyGenerator(c);
-    return `${baseKey}:${endpoint}`;
-  };
+    (c: Context): string => {
+      const baseKey = userKeyGenerator(c);
+      return `${baseKey}:${endpoint}`;
+    };

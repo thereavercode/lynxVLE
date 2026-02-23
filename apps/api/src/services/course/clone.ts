@@ -1,5 +1,5 @@
-import { getSupabase } from '$src/utils/supabase';
-import type { Course, Lesson, LessonSection, GroupMember } from '$src/types/database';
+import { getSupabase } from '../../utils/supabase';
+import type { Course, Lesson, LessonSection, GroupMember } from '../../types/database';
 import type { PostgrestError } from '@supabase/supabase-js';
 
 const supabase = getSupabase();

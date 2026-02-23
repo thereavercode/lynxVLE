@@ -3,17 +3,17 @@ import {
   ZCourseDocumentPresignUrlUpload,
   ZCourseDownloadPresignedUrl,
   ZCoursePresignUrlUpload
-} from '$src/types/course';
+} from '../../types/course';
 import { describeRoute, validator } from 'hono-openapi';
 
-import { BUCKET_NAME } from '$src/constants/upload';
-import { CLOUDFLARE } from '$src/constants';
-import type { GetSignedUrlParameters } from '$src/utils/s3';
+import { BUCKET_NAME } from '../../constants/upload';
+import { CLOUDFLARE } from '../../constants';
+import type { GetSignedUrlParameters } from '../../utils/s3';
 import { Hono } from 'hono';
-import { authMiddleware } from '$src/middlewares/auth';
-import { generateFileKey } from '$src/utils/upload';
+import { authMiddleware } from '../../middlewares/auth';
+import { generateFileKey } from '../../utils/upload';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { s3Client } from '$src/utils/s3';
+import { s3Client } from '../../utils/s3';
 
 // Response schemas for OpenAPI documentation
 const PresignUploadResponse = {
