@@ -200,14 +200,13 @@ async function cloneLessons(
 
   const { data } = await supabase.from('lesson').insert(clonedLessons).select();
 
-  const newLessons = data?.map((dataItem, dataIndex) => {
+  const newLessons: Lesson[] | null = data ? data.map((dataItem, dataIndex) => {
     return {
       ...dataItem,
       exercise: lessons[dataIndex].exercise,
       lesson_language: lessons[dataIndex].lesson_language
     };
-  });
-
+  }) : null;
   return { newLessons };
 }
 

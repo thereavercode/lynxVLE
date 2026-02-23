@@ -1,4 +1,9 @@
-import { Redis } from 'ioredis';
-import { env } from '../../config/env';
+import Redis from 'ioredis';
+import { env } from '../../../src/config/env';
 
-export const redis = new Redis(env.REDIS_URL);
+const redisUrl = env.REDIS_URL;
+if (!redisUrl) {
+    throw new Error('REDIS_URL environment variable is required');
+}
+
+export const redis = new Redis(redisUrl);

@@ -12,6 +12,9 @@ import { supabase } from '../../utils/supabase';
  */
 export const extractUserIdFromToken = async (token: string): Promise<string | null> => {
   try {
+    if (!supabase) {
+      throw new Error('Supabase client not initialized');
+    }
     const { data } = await supabase.auth.getUser(token);
     return data.user?.id || null;
   } catch {
