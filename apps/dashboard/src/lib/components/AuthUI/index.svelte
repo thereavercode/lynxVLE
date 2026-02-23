@@ -38,7 +38,7 @@
       const { error, data } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo
+          redirectTo : "https://tnbsjrvjmlheyncxycyz.supabase.co/auth/v1/callback"
         }
       });
 
