@@ -44,7 +44,7 @@ const config = {
           'unsafe-inline',
           'https://cdn.plyr.io',
           'https://unpkg.com/katex@0.12.0/dist/katex.min.css',
-					'https://assets.cdn.clsrio.com/carbon-all.css',
+          'https://assets.cdn.clsrio.com/carbon-all.css',
           'https://assets.cdn.clsrio.com/eqneditor_1.css'
         ],
         'font-src': ['self', 'https://fonts.gstatic.com', 'https://cdn.plyr.io'],
@@ -54,7 +54,8 @@ const config = {
         'connect-src': [
           'self',
           'https://*.supabase.co',
-          'https://*.classroomio.com',
+          'https://*.vercel.app',
+          'https://lynx-vle-*.vercel.app',
           'https://assets.cdn.clsrio.com',
           'https://cdn.plyr.io',
           'https://*.i.posthog.com',
@@ -62,7 +63,7 @@ const config = {
           'https://*.r2.cloudflarestorage.com',
           'http://localhost:54321',
           'ws://localhost:54321',
-          'wss://*.classroomio.com',
+          'wss://*.vercel.app',
           'wss://*.supabase.co',
           'https://*.senja.io'
         ],
@@ -77,6 +78,7 @@ const config = {
         'default-src': ['self'],
         'script-src': [
           'self',
+          'https://*.vercel.app',
           'https://assets.cdn.clsrio.com',
           'https://cdnjs.cloudflare.com',
           'https://*.i.posthog.com',
@@ -105,8 +107,6 @@ const config = {
         'connect-src': [
           'self',
           'https://*.supabase.co',
-          'https://pgrest.classroomio.com',
-          'https://api.classroomio.com',
           'https://assets.cdn.clsrio.com',
           'https://cdn.plyr.io',
           'https://*.i.posthog.com',
@@ -114,7 +114,7 @@ const config = {
           'https://*.r2.cloudflarestorage.com',
           'http://localhost:54321',
           'ws://localhost:54321',
-          'wss://*.classroomio.com',
+          'wss://*.vercel.app',
           'wss://*.supabase.co',
           'https://*.senja.io'
         ],

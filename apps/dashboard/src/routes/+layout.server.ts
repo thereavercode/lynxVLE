@@ -1,7 +1,7 @@
 import { getSupabase, supabase } from '$lib/utils/functions/supabase';
-
 import type { CurrentOrg } from '$lib/utils/types/org';
 import type { MetaTagsProps } from 'svelte-meta-tags';
+
 import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
 import { blockedSubdomain } from '$lib/utils/constants/app';
 import { dev } from '$app/environment';
@@ -9,11 +9,9 @@ import { env } from '$env/dynamic/private';
 import { getCurrentOrg } from '$lib/utils/services/org';
 import { redirect } from '@sveltejs/kit';
 
-if (!supabase) {
-  getSupabase();
-}
+if (!supabase) getSupabase();
 
-export const ssr = PUBLIC_IS_SELFHOSTED === 'true' ? false : true;
+export const ssr = PUBLIC_IS_SELFHOSTED !== 'true';
 
 interface LoadOutput {
   orgSiteName: string;
@@ -24,126 +22,176 @@ interface LoadOutput {
   serverLang: string;
 }
 
-const APP_SUBDOMAINS = env.PRIVATE_APP_SUBDOMAINS?.split(',') || [];
+const APP_SUBDOMAINS =
+  env.PRIVATE_APP_SUBDOMAINS?.split(',').map((s) => s.trim()) ?? [];
 
 export const load = async ({ url, cookies, request }): Promise<LoadOutput> => {
+  const origin = url.origin;
+  const host = url.host;
+
+  const isLocal = host.includes('localhost');
+  const isVercel = host.endsWith('vercel.app');
+  const isDevEnv = dev || isLocal || isVercel;
+
   const response: LoadOutput = {
     orgSiteName: '',
     isOrgSite: false,
     skipAuth: false,
     org: null,
     baseMetaTags: getBaseMetaTags(url),
-    serverLang: request.headers?.get('accept-language') || ''
+    serverLang: request.headers?.get('accept-language') ?? ''
   };
 
-  console.log('PUBLIC_IS_SELFHOSTED', PUBLIC_IS_SELFHOSTED);
+  /* -------------------------------------------------------------------------- */
+  /* SELF-HOSTED MODE                                                           */
+  /* -------------------------------------------------------------------------- */
 
-  // Selfhosted usecase would be here
   if (PUBLIC_IS_SELFHOSTED === 'true') {
     const subdomain = getSubdomain(url);
-    console.log('subdomain', subdomain);
+    if (!subdomain) return response;
 
-    // Student dashboard
-    if (subdomain) {
-      const org = (await getCurrentOrg(subdomain, true)) || null;
+    const org = await getCurrentOrg(subdomain, true);
+    if (!org) return response;
 
-      // Organization by subdomain not found
-      if (!org) {
-        return response;
-      }
+    return {
+      ...response,
+      org,
+      isOrgSite: true,
+      orgSiteName: subdomain
+    };
+  }
 
-      response.org = org;
-      response.isOrgSite = true;
-      response.orgSiteName = subdomain;
+  /* -------------------------------------------------------------------------- */
+  /* LOCAL DEBUG COOKIE SUPPORT                                                 */
+  /* -------------------------------------------------------------------------- */
+
+  const tempOrg = url.searchParams.get('org');
+  if (isLocal && tempOrg) {
+    cookies.set('_orgSiteName', tempOrg, { path: '/' });
+  }
+
+  const cookieOrg = cookies.get('_orgSiteName');
+  const debugPlay = cookies.get('debugPlay') === 'true';
+  const debugMode = cookieOrg && cookieOrg !== 'false';
+
+  const subdomain = getSubdomain(url) ?? '';
+
+  /* -------------------------------------------------------------------------- */
+  /* CUSTOM DOMAIN                                                              */
+  /* -------------------------------------------------------------------------- */
+
+  if (isCustomDomain(url)) {
+    const org = await getCurrentOrg(host, true, true);
+    if (!org) return response;
+
+    return {
+      ...response,
+      org,
+      isOrgSite: true,
+      orgSiteName: org.siteName ?? ''
+    };
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* BLOCKED SUBDOMAINS                                                         */
+  /* -------------------------------------------------------------------------- */
+
+  if (blockedSubdomain.includes(subdomain)) {
+    if (subdomain === 'play' || debugPlay) {
+      return { ...response, skipAuth: true };
     }
 
-    // Never go beyond this for selfhosted instances
+    if (!isDevEnv) {
+      throw redirect(307, origin);
+    }
+
     return response;
   }
 
-  const isLocalHost = url.host.includes('localhost');
+  /* -------------------------------------------------------------------------- */
+  /* APP SUBDOMAIN (dashboard, staging, etc.)                                  */
+  /* -------------------------------------------------------------------------- */
 
-  const tempSiteName = url.searchParams.get('org');
-
-  if (isLocalHost && tempSiteName) {
-    console.log('setting sitename temp');
-    cookies.set('_orgSiteName', tempSiteName, {
-      path: '/'
-    });
+  if (APP_SUBDOMAINS.includes(subdomain)) {
+    return response;
   }
 
-  const _orgSiteName = cookies.get('_orgSiteName');
-  const debugPlay = cookies.get('debugPlay');
-  const debugMode = _orgSiteName && _orgSiteName !== 'false';
+  /* -------------------------------------------------------------------------- */
+  /* ORG SUBDOMAIN                                                              */
+  /* -------------------------------------------------------------------------- */
 
-  const subdomain = getSubdomain(url) || '';
+  const orgSiteName = debugMode ? cookieOrg : subdomain;
+  if (!orgSiteName) return response;
 
-  const isDev = dev || isLocalHost;
+  const org = await getCurrentOrg(orgSiteName, true);
 
-  if (isURLCustomDomain(url)) {
-    // Custom domain
-    response.org = (await getCurrentOrg(url.host, true, true)) || null;
-
-    console.log('custom domain response.org', response.org);
-
-    if (!response.org) {
-      console.error('Custom domain org not found, loading dashboard');
-      return response;
+  if (!org) {
+    if (!isDevEnv) {
+      throw redirect(307, `${origin}/404?type=org`);
     }
 
-    response.isOrgSite = true;
-    response.orgSiteName = response.org?.siteName || '';
-    return response;
-  } else if (!blockedSubdomain.includes(subdomain)) {
-    if (APP_SUBDOMAINS.includes(subdomain)) {
-      // This is an app domain specified in the .env file
-      return response;
-    }
-
-    console.log('subdomain', subdomain);
-
-    response.isOrgSite = debugMode || !!subdomain;
-    response.orgSiteName = debugMode ? _orgSiteName : subdomain;
-    response.org = (await getCurrentOrg(response.orgSiteName, true)) || null;
-
-    if (!response.org && !isDev) {
-      throw redirect(307, 'https://app.classroomio.com/404?type=org');
-    } else if (!response.org && _orgSiteName) {
+    if (cookieOrg) {
       cookies.delete('_orgSiteName', { path: '/' });
     }
-  } else if (subdomain === 'play' || debugPlay === 'true') {
-    response.skipAuth = true;
-  } else if (!APP_SUBDOMAINS.includes(subdomain) && !isDev) {
-    // This case is for anything in our blockedSubdomains
-    throw redirect(307, 'https://app.classroomio.com');
+
+    return response;
   }
 
-  return response;
+  return {
+    ...response,
+    org,
+    isOrgSite: true,
+    orgSiteName
+  };
 };
 
-function isURLCustomDomain(url: URL) {
-  if (url.host.includes('localhost')) {
-    return false;
-  }
+/* -------------------------------------------------------------------------- */
+/* HELPERS                                                                    */
+/* -------------------------------------------------------------------------- */
 
-  const notCustomDomainHosts = [env.PRIVATE_APP_HOST || '', 'classroomio.com', 'vercel.app'].filter(
-    Boolean
-  );
+function isCustomDomain(url: URL) {
+  if (url.host.includes('localhost')) return false;
 
-  return !notCustomDomainHosts.some((host) => url.host.endsWith(host));
+  const notCustomHosts = [
+    env.PRIVATE_APP_HOST,
+    'classroomio.com',
+    'vercel.app'
+  ].filter(Boolean);
+
+  return !notCustomHosts.some((host) => url.host.endsWith(host));
 }
 
-function getBaseMetaTags(url: URL) {
+function getSubdomain(url: URL) {
+  const hostname = url.hostname.replace('www.', '');
+  const parts = hostname.split('.');
+  const appHost = env.PRIVATE_APP_HOST;
+
+  if (!appHost) return null;
+
+  const appParts = appHost.split('.');
+  const isAppHost =
+    parts.slice(-appParts.length).join('.') === appHost;
+
+  return isAppHost && parts.length > appParts.length
+    ? parts[0]
+    : null;
+}
+
+function getBaseMetaTags(url: URL): MetaTagsProps {
+  const canonical = new URL(url.pathname, url.origin).href;
+
   return Object.freeze({
-    title: 'ClassroomIO | The Open Source Learning Management System for Companies',
+    title:
+      'ClassroomIO | The Open Source Learning Management System for Companies',
     description:
       'A flexible, user-friendly platform for creating, managing, and delivering courses for companies and training organisations',
-    canonical: new URL(url.pathname, url.origin).href,
+    canonical,
     openGraph: {
       type: 'website',
-      url: new URL(url.pathname, url.origin).href,
+      url: canonical,
       locale: 'en_IE',
-      title: 'ClassroomIO | The Open Source Learning Management System for Companies',
+      title:
+        'ClassroomIO | The Open Source Learning Management System for Companies',
       description:
         'A flexible, user-friendly platform for creating, managing, and delivering courses for companies and training organisations',
       siteName: 'ClassroomIO',
@@ -153,36 +201,23 @@ function getBaseMetaTags(url: URL) {
           alt: 'ClassroomIO OG Image',
           width: 1920,
           height: 1080,
-          secureUrl: 'https://brand.cdn.clsrio.com/og/classroomio-og.png',
+          secureUrl:
+            'https://brand.cdn.clsrio.com/og/classroomio-og.png',
           type: 'image/jpeg'
         }
       ]
     },
     twitter: {
-      handle: '@classroomio',
-      site: '@classroomio',
-      cardType: 'summary_large_image' as const,
-      title: 'ClassroomIO | The Open Source Learning Management System for Companies',
+      handle: '@zumokenya',
+      site: '@zumokenya',
+      cardType: 'summary_large_image',
+      title:
+        'ClassroomIO | The Open Source Learning Management System for Companies',
       description:
         'A flexible, user-friendly platform for creating, managing, and delivering courses for companies and training organisations',
-      image: 'https://brand.cdn.clsrio.com/og/classroomio-og.png',
+      image:
+        'https://brand.cdn.clsrio.com/og/classroomio-og.png',
       imageAlt: 'ClassroomIO OG Image'
     }
-  });
-}
-
-function getSubdomain(url: URL) {
-  const host = url.hostname.replace('www.', '');
-  const parts = host.split('.');
-  const appHost = env.PRIVATE_APP_HOST;
-
-  const appHostParts = appHost.split('.');
-  const isAppHost = parts.slice(-appHostParts.length).join('.') === appHost;
-
-  if (isAppHost) {
-    // Subdomain exists only if extra part(s) before main domain
-    return parts.length > appHostParts.length ? parts[0] : null;
-  }
-
-  return null;
+  } satisfies MetaTagsProps);
 }
