@@ -1,18 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "verbatimModuleSyntax": false,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "noEmit": false,
-    "outDir": "./dist",
+    "baseUrl": "./",
     "declaration": true,
-    "sourceMap": true,
-    "resolveJsonModule": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "outDir": "./dist",
+    "paths": {
+      "$src": [
+        "./src"
+      ],
+      "$src/*": [
+        "./src/*"
+      ]
+    },
+    "resolveJsonModule": false,
     "skipLibCheck": true,
-    "strict": true,
+    "sourceMap": true,
+    "target": "ESNext",
     "typeRoots": [
       "./node_modules/@types",
       "./src/types"
@@ -27,5 +34,9 @@
   "exclude": [
     "node_modules",
     "dist"
-  ]
+  ],
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "verbose": false
+  }
 }
