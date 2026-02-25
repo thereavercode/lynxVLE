@@ -100,7 +100,7 @@ const config = {
           'https://unpkg.com/katex@0.12.0/dist/katex.min.css',
           'https://assets.cdn.clsrio.com/eqneditor_1.css'
         ],
-        'font-src': ['self', 'https://fonts.gstatic.com', 'https://cdn.plyr.io'],
+        'font-src': ['self', 'https://fonts.gstatic.com', 'https://cdn.plyr.io https://1.www.s81c.com'],
         'img-src': ['self', 'data:', 'https:'],
         'media-src': ['self', 'https:', 'data:'],
         'frame-src': ['self', 'https://www.youtube.com', 'https://youtube.com'],
@@ -110,6 +110,7 @@ const config = {
           'https://assets.cdn.clsrio.com',
           'https://cdn.plyr.io',
           'https://*.i.posthog.com',
+          'https://eu.posthog.com',
           'https://umami.hz.oncws.com',
           'https://*.r2.cloudflarestorage.com',
           'http://localhost:54321',
