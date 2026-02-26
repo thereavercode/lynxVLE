@@ -1,4 +1,4 @@
-import { User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import { getSupabase } from '../supabase';
 
 const supabase = getSupabase();

@@ -1,5 +1,5 @@
-import { getSupabase } from '../../utils/supabase';
-import type { Course, Lesson, LessonSection, GroupMember } from '../../types/database';
+import { getSupabase } from '$src/utils/supabase';
+import type { Course, Lesson, LessonSection, GroupMember } from '$src/types/database';
 import type { PostgrestError } from '@supabase/supabase-js';
 
 const supabase = getSupabase();
@@ -200,13 +200,14 @@ async function cloneLessons(
 
   const { data } = await supabase.from('lesson').insert(clonedLessons).select();
 
-  const newLessons: Lesson[] | null = data ? data.map((dataItem, dataIndex) => {
+  const newLessons = data?.map((dataItem, dataIndex) => {
     return {
       ...dataItem,
       exercise: lessons[dataIndex].exercise,
       lesson_language: lessons[dataIndex].lesson_language
     };
-  }) : null;
+  });
+
   return { newLessons };
 }
 

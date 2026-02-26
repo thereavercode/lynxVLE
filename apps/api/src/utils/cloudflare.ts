@@ -1,4 +1,4 @@
-import { CLOUDFLARE } from '../constants';
+import { CLOUDFLARE } from '$src/constants';
 
 export const getCloudflarePdfBuffer = async (html: string, styles?: string) => {
   console.log('Generating PDF with Cloudflare API...');

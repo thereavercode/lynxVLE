@@ -1,4 +1,4 @@
-import { env } from '../config/env';
+import { env } from '$src/config/env';
 
 export * from './rate-limiter';
 

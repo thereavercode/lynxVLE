@@ -1,4 +1,4 @@
-import type { TLessonDownloadContent } from '../types/course/lesson';
+import type { TLessonDownloadContent } from '$src/types/course/lesson';
 import { marked } from 'marked';
 
 function getHtmlTemplate(body: string): string {
@@ -103,38 +103,42 @@ function getLessonBody({
         </section>
 
         <section>
-        ${showExtraResources
-      ? `
+        ${
+          showExtraResources
+            ? `
             <section>
               <h1 class='text-xl font-bold my-1'>Extra Resources</h1>
-              ${slideUrl
-        ? `<div class="flex mt-2 mb-1">
+              ${
+                slideUrl
+                  ? `<div class="flex mt-2 mb-1">
                         <p class="m-0 mr-2">Slide Link:</p> <a href=${slideUrl} style="color: blue" class="underline">Open Here</a>
                     </div>`
-        : ''
-      }
-              ${video && video.length > 0
-        ? `
+                  : ''
+              }
+              ${
+                video && video.length > 0
+                  ? `
                     <p class="m-0">Video Link:</p>
                     <div class="m-0">
                       <ol class="m-0">
                         ${video
-          .map(
-            (videoData, index) => `
-                            <li key=${index + 1
-              }><a href=${videoData} style="color: blue" class="underline">${videoData}</a></li> 
+                          .map(
+                            (videoData, index) => `
+                            <li key=${
+                              index + 1
+                            }><a href=${videoData} style="color: blue" class="underline">${videoData}</a></li> 
                         `
-          )
-          .join('')}
+                          )
+                          .join('')}
                       </ol>
                     </div>
                     `
-        : ''
-      }
+                  : ''
+              }
             </section>
           `
-      : ''
-    }
+            : ''
+        }
         </section>
       </main>
 

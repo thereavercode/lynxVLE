@@ -4,6 +4,7 @@
     "baseUrl": "./",
     "declaration": true,
     "declarationMap": true,
+    "verbatimModuleSyntax": true,
     "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",

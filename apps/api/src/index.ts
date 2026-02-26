@@ -1,8 +1,8 @@
 import 'dotenv/config';
 
-import { app } from './app';
-import { configureOpenAPI } from './utils/openapi';
-import { env } from './config/env';
+import { app } from '$src/app';
+import { configureOpenAPI } from '$src/utils/openapi';
+import { env } from '$src/config/env';
 import { serve } from '@hono/node-server';
 import { showRoutes } from 'hono/dev';
 

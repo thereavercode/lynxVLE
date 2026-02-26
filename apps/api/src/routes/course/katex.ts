@@ -1,4 +1,5 @@
-import { Context, Hono } from 'hono';
+import { Hono } from 'hono';
+import type { Context } from 'hono'
 
 import katex from 'katex';
 import { z } from 'zod';

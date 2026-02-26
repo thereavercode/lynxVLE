@@ -4,7 +4,7 @@
  */
 
 import type { Context } from 'hono';
-import { supabase } from '../../utils/supabase';
+import { supabase } from '$src/utils/supabase';
 
 /**
  * Extract user ID from JWT token
@@ -12,9 +12,6 @@ import { supabase } from '../../utils/supabase';
  */
 export const extractUserIdFromToken = async (token: string): Promise<string | null> => {
   try {
-    if (!supabase) {
-      throw new Error('Supabase client not initialized');
-    }
     const { data } = await supabase.auth.getUser(token);
     return data.user?.id || null;
   } catch {
@@ -102,7 +99,7 @@ export const ipKeyGenerator = (c: Context): string => {
  */
 export const endpointKeyGenerator =
   (endpoint: string) =>
-    (c: Context): string => {
-      const baseKey = userKeyGenerator(c);
-      return `${baseKey}:${endpoint}`;
-    };
+  (c: Context): string => {
+    const baseKey = userKeyGenerator(c);
+    return `${baseKey}:${endpoint}`;
+  };
